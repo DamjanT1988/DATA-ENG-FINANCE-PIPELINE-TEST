@@ -1,4 +1,4 @@
-## de-finance-pipeline
+## Data Engineering Pipeline (portfolio project)
 
 Production-style, Dockerized **end-to-end data engineering pipeline**:
 
