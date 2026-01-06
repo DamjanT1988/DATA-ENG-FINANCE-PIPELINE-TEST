@@ -1,4 +1,4 @@
-## Data Engineering Pipeline (portfolio project)
+## Data Engineering Pipeline 
 
 Production-style, Dockerized **end-to-end data engineering pipeline**:
 
@@ -8,7 +8,7 @@ Production-style, Dockerized **end-to-end data engineering pipeline**:
 - **Load**: PostgreSQL warehouse (raw + staging schemas)
 - **Model**: dbt models to create analytics-ready star schema (analytics schema)
 
-This is a portfolio project done by Damjan with assistance of AI, to sharpen skill in data engineering, environment and the ETl pipeline using raw financial data set.
+This is a portfolio project done by Damjan with assistance of AI, to sharpen skill in data engineering, environment and the ETL pipeline using raw financial data set. This demonstrates my skills in using AI to build advanced solutions within a 60 minutes.
 
 ### Architecture overview
 
