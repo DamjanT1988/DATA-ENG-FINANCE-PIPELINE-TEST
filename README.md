@@ -8,6 +8,8 @@ Production-style, Dockerized **end-to-end data engineering pipeline**:
 - **Load**: PostgreSQL warehouse (raw + staging schemas)
 - **Model**: dbt models to create analytics-ready star schema (analytics schema)
 
+This is a portfolio project done by Damjan with assistance of AI, to sharpen skill in data engineering, environment and the ETl pipeline using raw financial data set.
+
 ### Architecture overview
 
 - **Input**: `data/raw/financial_transactions.csv`
