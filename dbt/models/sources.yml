@@ -1,0 +1,24 @@
+version: 2
+
+sources:
+  - name: staging
+    schema: staging
+    tables:
+      - name: financial_transactions
+        description: Cleaned and deduplicated transactions loaded by the Python pipeline.
+        columns:
+          - name: transaction_id
+            tests:
+              - not_null
+              - unique
+          - name: account_id
+            tests:
+              - not_null
+          - name: transaction_ts
+            tests:
+              - not_null
+          - name: posting_date
+            tests:
+              - not_null
+
+

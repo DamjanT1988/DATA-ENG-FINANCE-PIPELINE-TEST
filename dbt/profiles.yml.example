@@ -1,0 +1,14 @@
+de_finance_pipeline:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: "{{ env_var('POSTGRES_HOST', 'postgres') }}"
+      port: "{{ env_var('POSTGRES_PORT', '5432') | int }}"
+      user: "{{ env_var('POSTGRES_USER', 'finance') }}"
+      password: "{{ env_var('POSTGRES_PASSWORD', 'finance_password') }}"
+      dbname: "{{ env_var('POSTGRES_DB', 'finance_dw') }}"
+      schema: analytics
+      threads: 4
+
+

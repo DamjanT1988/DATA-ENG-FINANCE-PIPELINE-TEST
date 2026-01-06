@@ -1,0 +1,51 @@
+version: 2
+
+models:
+  - name: dim_accounts
+    description: One row per account with first seen timestamp and location attributes.
+    columns:
+      - name: account_id
+        tests:
+          - not_null
+          - unique
+
+  - name: dim_merchants
+    description: One row per merchant with stable attributes.
+    columns:
+      - name: merchant_id
+        tests:
+          - not_null
+          - unique
+
+  - name: fct_transactions
+    description: Fact table at transaction grain (one row per transaction_id).
+    columns:
+      - name: transaction_id
+        tests:
+          - not_null
+          - unique
+      - name: account_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_accounts')
+                field: account_id
+      - name: merchant_id
+        tests:
+          - dbt_utils.relationships_where:
+              arguments:
+                to: ref('dim_merchants')
+                field: merchant_id
+                from_condition: "merchant_id is not null"
+                to_condition: "merchant_id is not null"
+      - name: currency
+        tests:
+          - accepted_values:
+              values: ["SEK", "EUR", "USD", "GBP", "NOK", "DKK"]
+      - name: status
+        tests:
+          - accepted_values:
+              values: ["BOOKED", "PENDING", "FAILED"]
+
+

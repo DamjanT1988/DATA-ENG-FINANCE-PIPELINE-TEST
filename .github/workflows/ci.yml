@@ -1,0 +1,59 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test-and-compile:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: finance_dw
+          POSTGRES_USER: finance
+          POSTGRES_PASSWORD: finance_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U finance -d finance_dw"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: finance_dw
+      POSTGRES_USER: finance
+      POSTGRES_PASSWORD: finance_password
+      LOG_LEVEL: INFO
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install \
+            pandas==2.2.3 \
+            psycopg2-binary==2.9.9 \
+            python-dateutil==2.9.0.post0 \
+            dbt-postgres==1.8.2 \
+            pytest==8.3.4
+
+      - name: Run unit tests
+        working-directory: de-finance-pipeline
+        run: pytest -q
+
+      - name: dbt deps + compile
+        run: |
+          mkdir -p ~/.dbt
+          cp de-finance-pipeline/dbt/profiles.yml.example ~/.dbt/profiles.yml
+          dbt deps --project-dir de-finance-pipeline/dbt --profiles-dir ~/.dbt
+          dbt compile --project-dir de-finance-pipeline/dbt --profiles-dir ~/.dbt
+
+

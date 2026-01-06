@@ -1,0 +1,65 @@
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-finance_dw}
+      POSTGRES_USER: ${POSTGRES_USER:-finance}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-finance_password}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  pipeline-runner:
+    profiles: ["tools"]
+    build:
+      context: .
+      dockerfile: docker/pipeline.Dockerfile
+    environment:
+      # Allow overriding from your own .env file; env_file is just defaults.
+      POSTGRES_HOST: ${POSTGRES_HOST:-postgres}
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+      POSTGRES_DB: ${POSTGRES_DB:-finance_dw}
+      POSTGRES_USER: ${POSTGRES_USER:-finance}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-finance_password}
+      DATABASE_URL: ${DATABASE_URL:-}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      DBT_PROFILES_DIR: /root/.dbt
+    volumes:
+      - ./:/app
+      - ./dbt/profiles.yml.example:/root/.dbt/profiles.yml:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: ["python", "-m", "src.pipeline"]
+
+  dbt:
+    profiles: ["tools"]
+    build:
+      context: .
+      dockerfile: docker/dbt.Dockerfile
+    environment:
+      POSTGRES_HOST: ${POSTGRES_HOST:-postgres}
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+      POSTGRES_DB: ${POSTGRES_DB:-finance_dw}
+      POSTGRES_USER: ${POSTGRES_USER:-finance}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-finance_password}
+      DATABASE_URL: ${DATABASE_URL:-}
+    volumes:
+      - ./:/app
+      - ./dbt/profiles.yml.example:/root/.dbt/profiles.yml:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    working_dir: /app/dbt
+    command: ["--version"]
+
+volumes:
+  postgres_data:
+
+
