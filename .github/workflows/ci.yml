@@ -46,14 +46,13 @@ jobs:
             pytest==8.3.4
 
       - name: Run unit tests
-        working-directory: de-finance-pipeline
         run: pytest -q
 
       - name: dbt deps + compile
         run: |
           mkdir -p ~/.dbt
-          cp de-finance-pipeline/dbt/profiles.yml.example ~/.dbt/profiles.yml
-          dbt deps --project-dir de-finance-pipeline/dbt --profiles-dir ~/.dbt
-          dbt compile --project-dir de-finance-pipeline/dbt --profiles-dir ~/.dbt
+          cp dbt/profiles.yml.example ~/.dbt/profiles.yml
+          dbt deps --project-dir dbt --profiles-dir ~/.dbt
+          dbt compile --project-dir dbt --profiles-dir ~/.dbt
 
 
