@@ -28,6 +28,7 @@ jobs:
       POSTGRES_USER: finance
       POSTGRES_PASSWORD: finance_password
       LOG_LEVEL: INFO
+      PYTHONPATH: ${{ github.workspace }}
     steps:
       - uses: actions/checkout@v4
 
